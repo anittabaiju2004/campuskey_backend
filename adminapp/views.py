@@ -469,44 +469,44 @@ def delete_company(request, pk):
 
 
 
-# from django.shortcuts import render
-# from gatepassapp.models import JobApplication
-# from adminapp.models import tbl_department, tbl_course, tbl_tutor, Company
+from django.shortcuts import render
+from campuskeyapi.models import JobApplication
+from adminapp.models import tbl_department, tbl_course, tbl_tutor, Company
 
-# def admin_view_applicants(request):
-#     # Get query params
-#     department_id = request.GET.get("department")
-#     course_id = request.GET.get("course")
-#     tutor_id = request.GET.get("tutor")
-#     company_id = request.GET.get("company")
+def admin_view_applicants(request):
+    # Get query params
+    department_id = request.GET.get("department")
+    course_id = request.GET.get("course")
+    tutor_id = request.GET.get("tutor")
+    company_id = request.GET.get("company")
 
-#     # Start with all applications
-#     applications = JobApplication.objects.all().order_by("-applied_at")
+    # Start with all applications
+    applications = JobApplication.objects.all().order_by("-applied_at")
 
-#     # Apply filters if provided
-#     if department_id:
-#         applications = applications.filter(student__department__id=department_id)
-#     if course_id:
-#         applications = applications.filter(student__course__id=course_id)
-#     if tutor_id:
-#         applications = applications.filter(student__tutor__id=tutor_id)
-#     if company_id:
-#         applications = applications.filter(job__company__id=company_id)
+    # Apply filters if provided
+    if department_id:
+        applications = applications.filter(student__department__id=department_id)
+    if course_id:
+        applications = applications.filter(student__course__id=course_id)
+    if tutor_id:
+        applications = applications.filter(student__tutor__id=tutor_id)
+    if company_id:
+        applications = applications.filter(job__company__id=company_id)
 
-#     # Filter options
-#     departments = tbl_department.objects.all()
-#     courses = tbl_course.objects.all()
-#     tutors = tbl_tutor.objects.all()
-#     companies = Company.objects.all()
+    # Filter options
+    departments = tbl_department.objects.all()
+    courses = tbl_course.objects.all()
+    tutors = tbl_tutor.objects.all()
+    companies = Company.objects.all()
 
-#     context = {
-#         "applications": applications,
-#         "departments": departments,
-#         "courses": courses,
-#         "tutors": tutors,
-#         "companies": companies,
-#     }
-#     return render(request, "adminapp/admin_view_applicants.html", context)
+    context = {
+        "applications": applications,
+        "departments": departments,
+        "courses": courses,
+        "tutors": tutors,
+        "companies": companies,
+    }
+    return render(request, "adminapp/admin_view_applicants.html", context)
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import GateGuard
@@ -564,25 +564,25 @@ def manage_guard(request):
 
 
 
-# from django.shortcuts import render, redirect, get_object_or_404
-# from django.contrib import messages
-# from gatepassapp.models import JobApplication
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from campuskeyapi.models import JobApplication
 
-# def update_application_status(request, application_id):
-#     if request.method == "POST":
-#         new_status = request.POST.get("status")
+def update_application_status(request, application_id):
+    if request.method == "POST":
+        new_status = request.POST.get("status")
 
-#         allowed_status = ["Company Approved", "Company Rejected"]
-#         if new_status not in allowed_status:
-#             messages.error(request, "Invalid status")
-#             return redirect('admin_view_applicants')
+        allowed_status = ["Company Approved", "Company Rejected"]
+        if new_status not in allowed_status:
+            messages.error(request, "Invalid status")
+            return redirect('admin_view_applicants')
 
-#         application = get_object_or_404(JobApplication, id=application_id)
-#         application.status = new_status
-#         application.save()
+        application = get_object_or_404(JobApplication, id=application_id)
+        application.status = new_status
+        application.save()
 
-#         messages.success(request, f"Status updated to {new_status}")
-#         return redirect('admin_view_applicants')
+        messages.success(request, f"Status updated to {new_status}")
+        return redirect('admin_view_applicants')
 
 
 
@@ -727,105 +727,103 @@ def delete_tutor(request, tutor_id):
     tutor = get_object_or_404(tbl_tutor, id=tutor_id)
     tutor.delete()
     return redirect("view_tutors")
+from django.shortcuts import render, redirect, get_object_or_404
+from campuskeyapi.models import StudentRequest
+import qrcode
+from io import BytesIO
+from django.core.files.base import ContentFile
+
+def hod_view_requests(request):
+    """
+    Display leave requests for the logged-in HOD.
+    """
+    # Get logged-in HOD ID (assuming stored in session)
+    hod_id = request.session.get("hod_id")
+    if not hod_id:
+        return redirect("admin_hod_login")  # redirect if not logged in
+
+    # Filter requests forwarded to this HOD only
+    requests = StudentRequest.objects.filter(forwarded_to_hod=True, hod_id=hod_id)
+
+    # Optional: filter by category (Urgent / Not Urgent)
+    category_filter = request.GET.get("category")
+    if category_filter in ["Urgent", "Not Urgent"]:
+        requests = requests.filter(category=category_filter)
+
+    # Group requests by (course, tutor)
+    grouped_requests = {}
+    for req in requests:
+        key = (req.course.name, req.tutor.name if req.tutor else "N/A")
+        if key not in grouped_requests:
+            grouped_requests[key] = []
+        grouped_requests[key].append(req)
+
+    context = {
+        "grouped_requests": grouped_requests,
+        "selected_category": category_filter
+    }
+    return render(request, "hodapp/hod_requests.html", context)
 
 
-# from django.shortcuts import render, redirect, get_object_or_404
-# from gatepassapp.models import StudentRequest
-# import qrcode
-# from io import BytesIO
-# from django.core.files.base import ContentFile
+import json
+from io import BytesIO
+from django.core.files.base import ContentFile
+import qrcode
 
-# def hod_view_requests(request):
-#     """
-#     Display leave requests for the logged-in HOD.
-#     """
-#     # Get logged-in HOD ID (assuming stored in session)
-#     hod_id = request.session.get("hod_id")
-#     if not hod_id:
-#         return redirect("admin_hod_login")  # redirect if not logged in
+def hod_approve_request(request, request_id):
+    student_request = get_object_or_404(StudentRequest, id=request_id)
 
-#     # Filter requests forwarded to this HOD only
-#     requests = StudentRequest.objects.filter(forwarded_to_hod=True, hod_id=hod_id)
+    # Ensure only the HOD assigned can approve
+    hod_id = request.session.get("hod_id")
+    if student_request.hod_id != hod_id:
+        return redirect("hod-view-requests")
 
-#     # Optional: filter by category (Urgent / Not Urgent)
-#     category_filter = request.GET.get("category")
-#     if category_filter in ["Urgent", "Not Urgent"]:
-#         requests = requests.filter(category=category_filter)
+    student_request.status = "HOD Approved"
 
-#     # Group requests by (course, tutor)
-#     grouped_requests = {}
-#     for req in requests:
-#         key = (req.course.name, req.tutor.name if req.tutor else "N/A")
-#         if key not in grouped_requests:
-#             grouped_requests[key] = []
-#         grouped_requests[key].append(req)
+    # ★ Create JSON data for QR
+    qr_payload = {
+        "leave_id": student_request.id,
+        "student_name": student_request.student.name,
+        "tutor_name": student_request.tutor.name if student_request.tutor else "N/A",
+        "hod_name": student_request.hod.name,
+        "department_name": student_request.department.name,
+        "course_name": student_request.course.name,
+        "request_date": student_request.request_date.strftime("%d/%m/%Y") if student_request.request_date else "",
+        "request_time": str(student_request.request_time) if student_request.request_time else "",
+        "reason": student_request.reason,
+        "category": student_request.category,
+        "status": student_request.status,
+    }
 
-#     context = {
-#         "grouped_requests": grouped_requests,
-#         "selected_category": category_filter
-#     }
-#     return render(request, "hodapp/hod_requests.html", context)
+    qr_text = json.dumps(qr_payload)   # Convert to JSON string
 
+    qr_img = qrcode.make(qr_text)
+    buffer = BytesIO()
+    qr_img.save(buffer, format="PNG")
 
-# import json
-# from io import BytesIO
-# from django.core.files.base import ContentFile
-# import qrcode
+    file_name = f"qr_{student_request.id}.png"
+    student_request.qr_code.save(file_name, ContentFile(buffer.getvalue()))
 
-# def hod_approve_request(request, request_id):
-#     student_request = get_object_or_404(StudentRequest, id=request_id)
+    student_request.save()
+    return redirect("hod-view-requests")
 
-#     # Ensure only the HOD assigned can approve
-#     hod_id = request.session.get("hod_id")
-#     if student_request.hod_id != hod_id:
-#         return redirect("hod-view-requests")
+def hod_reject_request(request, request_id):
+    student_request = get_object_or_404(StudentRequest, id=request_id)
 
-#     student_request.status = "HOD Approved"
+    # Ensure only the HOD assigned can reject
+    hod_id = request.session.get("hod_id")
+    if student_request.hod_id != hod_id:
+        return redirect("hod-view-requests")
 
-#     # ★ Create JSON data for QR
-#     qr_payload = {
-#         "leave_id": student_request.id,
-#         "student_name": student_request.student.name,
-#         "tutor_name": student_request.tutor.name if student_request.tutor else "N/A",
-#         "hod_name": student_request.hod.name,
-#         "department_name": student_request.department.name,
-#         "course_name": student_request.course.name,
-#         "request_date": student_request.request_date.strftime("%d/%m/%Y") if student_request.request_date else "",
-#         "request_time": str(student_request.request_time) if student_request.request_time else "",
-#         "reason": student_request.reason,
-#         "category": student_request.category,
-#         "status": student_request.status,
-#     }
-
-#     qr_text = json.dumps(qr_payload)   # Convert to JSON string
-
-#     qr_img = qrcode.make(qr_text)
-#     buffer = BytesIO()
-#     qr_img.save(buffer, format="PNG")
-
-#     file_name = f"qr_{student_request.id}.png"
-#     student_request.qr_code.save(file_name, ContentFile(buffer.getvalue()))
-
-#     student_request.save()
-#     return redirect("hod-view-requests")
-
-# def hod_reject_request(request, request_id):
-#     student_request = get_object_or_404(StudentRequest, id=request_id)
-
-#     # Ensure only the HOD assigned can reject
-#     hod_id = request.session.get("hod_id")
-#     if student_request.hod_id != hod_id:
-#         return redirect("hod-view-requests")
-
-#     student_request.status = "HOD Rejected"
-#     student_request.save()
-#     return redirect("hod-view-requests")
+    student_request.status = "HOD Rejected"
+    student_request.save()
+    return redirect("hod-view-requests")
 
 
 
 
-# def view_applicants(request):
-#     return render(request, "hodapp/applicants.html")
+def view_applicants(request):
+    return render(request, "hodapp/applicants.html")
 
 
 
@@ -855,43 +853,43 @@ def hod_view_jobs(request):
     return render(request, "hodapp/hod_view_jobs.html", context)
 
 
-# from gatepassapp.models import JobApplication
-# # views.py
-# from django.shortcuts import render
-# from adminapp.models import  tbl_department, tbl_course, tbl_tutor, Company
+from campuskeyapi.models import JobApplication
+# views.py
+from django.shortcuts import render
+from adminapp.models import  tbl_department, tbl_course, tbl_tutor, Company
 
-# def hod_view_applicants(request):
-#     hod = request.session.get("hod_id") 
-#      # assuming HOD is logged in; adjust if you store HOD differently
-#     hod = tbl_hod.objects.get(id=hod)
-#     # Get query params
-#     course_id = request.GET.get("course")
-#     tutor_id = request.GET.get("tutor")
-#     company_id = request.GET.get("company")
+def hod_view_applicants(request):
+    hod = request.session.get("hod_id") 
+     # assuming HOD is logged in; adjust if you store HOD differently
+    hod = tbl_hod.objects.get(id=hod)
+    # Get query params
+    course_id = request.GET.get("course")
+    tutor_id = request.GET.get("tutor")
+    company_id = request.GET.get("company")
 
-#     # Filter applications by HOD department only
-#     applications = JobApplication.objects.filter(student__department=hod.department).order_by("-applied_at")
+    # Filter applications by HOD department only
+    applications = JobApplication.objects.filter(student__department=hod.department).order_by("-applied_at")
 
-#     if course_id:
-#         applications = applications.filter(student__course__id=course_id)
-#     if tutor_id:
-#         applications = applications.filter(student__tutor__id=tutor_id)
-#     if company_id:
-#         applications = applications.filter(job__company__id=company_id)
+    if course_id:
+        applications = applications.filter(student__course__id=course_id)
+    if tutor_id:
+        applications = applications.filter(student__tutor__id=tutor_id)
+    if company_id:
+        applications = applications.filter(job__company__id=company_id)
 
-#     # Filters: courses and tutors from HOD department, companies all
-#     courses = tbl_course.objects.filter(department=hod.department)
-#     tutors = tbl_tutor.objects.filter(department=hod.department)
-#     companies = Company.objects.all()
+    # Filters: courses and tutors from HOD department, companies all
+    courses = tbl_course.objects.filter(department=hod.department)
+    tutors = tbl_tutor.objects.filter(department=hod.department)
+    companies = Company.objects.all()
 
-#     context = {
-#         "applications": applications,
-#         "courses": courses,
-#         "tutors": tutors,
-#         "companies": companies,
-#         "department": hod.department.name,
-#     }
-#     return render(request, "hodapp/hod_view_applicants.html", context)
+    context = {
+        "applications": applications,
+        "courses": courses,
+        "tutors": tutors,
+        "companies": companies,
+        "department": hod.department.name,
+    }
+    return render(request, "hodapp/hod_view_applicants.html", context)
 
 
 

@@ -30,10 +30,9 @@ urlpatterns=[
     path('companies/', views.company_list, name='company-list'),
     path('companies/edit/<int:pk>/', views.edit_company, name='company-edit'),
     path('companies/delete/<int:pk>/', views.delete_company, name='company-delete'),
-    # path("admin_view_applicants/", views.admin_view_applicants, name="admin_view_applicants"),
-
+    path("admin_view_applicants/", views.admin_view_applicants, name="admin_view_applicants"),
     path("manage-guard/", manage_guard, name="manage_guard"),
-    # path("hod/update-application-status/<int:application_id>/",update_application_status,name="update_application_status"),
+    path("hod/update-application-status/<int:application_id>/",update_application_status,name="update_application_status"),
 
 
 
@@ -46,12 +45,12 @@ urlpatterns=[
     path("tutors/delete/<int:tutor_id>/", views.delete_tutor, name="delete_tutor"),
     # path('view_requests/', views.view_requests, name='view_requests'),
     path('hod_jobs/', views.hod_view_jobs, name='hod_view_jobs'),
-    # path('applicants/', views.view_applicants, name='view_applicants'),
-    # path('hod/requests/', hod_view_requests, name='hod-view-requests'),
-    # path('hod/requests/approve/<int:request_id>/', hod_approve_request, name='hod-approve-request'),
-    # path('hod/requests/reject/<int:request_id>/', hod_reject_request, name='hod-reject-request'),
+    path('applicants/', views.view_applicants, name='view_applicants'),
+    path('hod/requests/', hod_view_requests, name='hod-view-requests'),
+    path('hod/requests/approve/<int:request_id>/', hod_approve_request, name='hod-approve-request'),
+    path('hod/requests/reject/<int:request_id>/', hod_reject_request, name='hod-reject-request'),
     path("hod/jobs/", views.hod_view_jobs, name="hod_view_jobs"),
-    # path("hod/applicants/", views.hod_view_applicants, name="hod_view_applicants"),
+    path("hod/applicants/", views.hod_view_applicants, name="hod_view_applicants"),
     path('hod/profile/<int:hod_id>/', views.hod_profile, name='hod_profile'),
     # urls.py
     path('hod/profile/update/<int:hod_id>/', views.edit_hod_profile, name='edit_hod_profile'),
