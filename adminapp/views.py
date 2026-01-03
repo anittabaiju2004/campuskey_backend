@@ -934,3 +934,128 @@ def edit_hod_profile(request, hod_id):
         "departments": departments
     }
     return render(request, "hodapp/hod_edit_profile.html", context)
+
+
+def add_fee_structure(request):
+    departments = tbl_department.objects.all()
+    courses = tbl_course.objects.all()
+
+    if request.method == "POST":
+        name = request.POST.get("name")
+        amount = request.POST.get("amount")
+        description = request.POST.get("description")
+        department_id = request.POST.get("department")
+        course_id = request.POST.get("course")
+
+        department = tbl_department.objects.get(id=department_id)
+        course = tbl_course.objects.get(id=course_id)
+
+        FeeStructure.objects.create(
+            name=name,
+            amount=amount,
+            description=description,
+            department=department,
+            course=course
+        )
+
+        messages.success(request, "Fee structure added successfully!")
+        return redirect("manage_fee_structure")
+
+    return render(
+        request,
+        "adminapp/add_fee_structure.html",
+        {
+            "departments": departments,
+            "courses": courses
+        }
+    )
+def edit_fee_structure(request, fee_structure_id):
+    fee_structure = get_object_or_404(FeeStructure, id=fee_structure_id)
+    departments = tbl_department.objects.all()
+    courses = tbl_course.objects.all()
+
+    if request.method == "POST":
+        fee_structure.name = request.POST.get("name")
+        fee_structure.amount = request.POST.get("amount")
+        fee_structure.description = request.POST.get("description")
+        fee_structure.department_id = request.POST.get("department")
+        fee_structure.course_id = request.POST.get("course")
+        fee_structure.save()
+
+        messages.success(request, "Fee structure updated successfully!")
+        return redirect("manage_fee_structure")
+
+    return render(
+        request,
+        "adminapp/edit_fee_structure.html",
+        {
+            "fee_structure": fee_structure,
+            "departments": departments,
+            "courses": courses
+        }
+    )
+
+def manage_fee_structure(request):
+    fee_structures = FeeStructure.objects.select_related("department", "course")
+    return render(
+        request,
+        "adminapp/view_fee_structure.html",
+        {"fee_structures": fee_structures}
+    )
+
+
+def delete_fee_structure(request, fee_structure_id):
+    fee_structure = get_object_or_404(FeeStructure, id=fee_structure_id)
+    fee_structure.delete()
+    messages.success(request, "Fee structure deleted successfully!")
+    return redirect("manage_fee_structure")
+
+# adminapp/views.py
+def admission_process_form(request, process_id=None):
+    process = None
+
+    if process_id:
+        process = get_object_or_404(AdmissionProcess, id=process_id)
+
+    if request.method == "POST":
+        step_title = request.POST.get("step_title")
+        step_description = request.POST.get("step_description")
+        order = request.POST.get("order")
+
+        if process:
+            process.step_title = step_title
+            process.step_description = step_description
+            process.order = order
+            process.save()
+            messages.success(request, "Admission step updated successfully!")
+        else:
+            AdmissionProcess.objects.create(
+                step_title=step_title,
+                step_description=step_description,
+                order=order
+            )
+            messages.success(request, "Admission step added successfully!")
+
+        return redirect("manage_admission_process")
+
+    return render(
+        request,
+        "adminapp/admission_form.html",
+        {"process": process}
+    )
+
+
+# views.py
+def manage_admission_process(request):
+    processes = AdmissionProcess.objects.all().order_by("order")
+    return render(
+        request,
+        "adminapp/manage_admission.html",
+        {"processes": processes}
+    )
+
+def delete_admission_process(request, process_id):
+    process = get_object_or_404(AdmissionProcess, id=process_id)
+    process.delete()
+    messages.success(request, "Admission step deleted successfully!")
+    return redirect("manage_admission_process")

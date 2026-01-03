@@ -9,7 +9,7 @@ from rest_framework import permissions
 from .views import *
 schema_view = get_schema_view(
    openapi.Info(
-      title="Gatepass App API",
+      title="Campuskey App API",
       default_version='v1',
       description="API documentation for your project",
    ),
@@ -95,4 +95,10 @@ urlpatterns = [
 
    # view student details
    path('student/<int:pk>/', StudentDetailView.as_view(), name='view_student'),
+
+   path("gemini-chat/", GeminiChatAPIView.as_view(), name="gemini-chat"),
+
+   # campuskeyapi/urls.py
+   path("chatbot/", chatbot_api, name="chatbot_api"),
+
 ]

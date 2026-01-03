@@ -181,3 +181,24 @@ class GateGuard(models.Model):
 
     def __str__(self):
         return f"{self.guard_id} - {self.name}"
+
+
+class FeeStructure(models.Model):
+    name = models.CharField(max_length=100)   # Course Fee / Lab Fee / Exam Fee
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(max_length=500)
+    department = models.ForeignKey(tbl_department, on_delete=models.CASCADE)
+    course = models.ForeignKey(tbl_course, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.name} - {self.course.name}"
+
+
+# models.py
+class AdmissionProcess(models.Model):
+    step_title = models.CharField(max_length=200)
+    step_description = models.TextField()
+    order = models.PositiveIntegerField(help_text="Step order (1,2,3...)")
+
+    def __str__(self):
+        return f"Step {self.order} - {self.step_title}"

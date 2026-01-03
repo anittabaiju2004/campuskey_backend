@@ -1,18 +1,22 @@
-from django.shortcuts import render
-
 # Create your views here.
 from django.shortcuts import render
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from campuskeyapi.models import tbl_student
 from adminapp.models import *
-
 import openpyxl
 from campuskeyapi.serializers import *
+from campuskeyapi.models import *
+from rest_framework import status
+from django.utils.timezone import now
+from rest_framework import viewsets, status
+from django.conf import settings
+import cv2
+import numpy as np
+import face_recognition
+import os
+from datetime import datetime
+from django.utils import timezone
 
 #Login as student, tutor
 class LoginView(APIView):
@@ -145,11 +149,8 @@ class StudentExcelUploadView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import StudentRequest
-from .serializers import StudentRequestSerializer
+
+
 
 class TutorStudentRequestsAPIView(APIView):
     """
@@ -169,11 +170,8 @@ class TutorStudentRequestsAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import StudentRequest
-from .serializers import StudentRequestSerializer
+ 
+
 #tutor approve a student leave request
 class TutorApproveRequestAPIView(APIView):
     """
@@ -226,11 +224,6 @@ class TutorViewJobsAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 #view for list all job applications submitted by students under a given tutor.
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import JobApplication, tbl_tutor
-from .serializers import JobApplicationSerializer
 
 class TutorViewAppliedStudentsAPIView(APIView):
     """
@@ -249,10 +242,8 @@ class TutorViewAppliedStudentsAPIView(APIView):
 
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import JobApplication
+ 
+
 
 class TutorApproveApplicationAPIView(APIView):
     def post(self, request, tutor_id, application_id, *args, **kwargs):
@@ -332,12 +323,8 @@ class TutorViewJobsByCompanyView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import MarkAttendance
-from .serializers import MarkAttendanceSerializer
-from campuskeyapi.models import tbl_student
+ 
+
 
 class TutorViewAttendanceAPIView(APIView):
     """
@@ -362,10 +349,7 @@ class TutorViewAttendanceAPIView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import MarkAttendance
+
 
 class UpdateAttendanceStatusAPIView(APIView):
     """
@@ -404,13 +388,9 @@ class UpdateAttendanceStatusAPIView(APIView):
 
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.utils.timezone import now
-from .models import MarkAttendance
-from .serializers import MarkAttendanceSerializer
-from campuskeyapi.models import tbl_student
+ 
+
+
 
 class TutorTodayAttendanceAPIView(APIView):
     """
@@ -440,10 +420,7 @@ class TutorTodayAttendanceAPIView(APIView):
 
 
 #today
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import MarkAttendance
+
 
 class UpdateAttendanceStatusAPIView(APIView):
     """
@@ -505,11 +482,6 @@ class UpdateAttendanceStatusAPIView(APIView):
 
 #Student
 #  Student creates a leave request
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from .models import StudentRequest
-from .serializers import StudentRequestSerializer
-
 class StudentRequestViewSet(viewsets.ModelViewSet):
     queryset = StudentRequest.objects.all()
     serializer_class = StudentRequestSerializer
@@ -532,11 +504,6 @@ class StudentRequestViewSet(viewsets.ModelViewSet):
 
         
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import tbl_student
-from .serializers import StudentProfileSerializer
 
 #View Student Profile
 class StudentProfileView(APIView):
@@ -582,18 +549,6 @@ class UpdateStudentProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.conf import settings
-from .models import tbl_student, MarkAttendance
-from .serializers import MarkAttendanceSerializer
-import cv2
-import numpy as np
-import face_recognition
-import os
-from datetime import datetime
-from django.utils import timezone
 
 class AttendanceAPIView(APIView):
     """
@@ -694,17 +649,7 @@ class AttendanceAPIView(APIView):
 
 
 # views.py
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import JobApplication
-from .serializers import JobApplicationSerializer
-# views.py
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework import status
-from .models import JobApplication
-from .serializers import JobApplicationSerializer
+
 
 class JobApplicationViewSet(viewsets.ModelViewSet):
     queryset = JobApplication.objects.all()
@@ -722,11 +667,7 @@ class JobApplicationViewSet(viewsets.ModelViewSet):
 
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import StudentRequest
-from .serializers import StudentRequestSerializer
+
 
 class StudentRequestsByStudentAPIView(APIView):
     """
@@ -739,11 +680,8 @@ class StudentRequestsByStudentAPIView(APIView):
 
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import JobApplication
-from .serializers import JobApplicationSerializer
+ 
+
 
 class StudentJobApplicationsAPIView(APIView):
     """
@@ -788,7 +726,7 @@ class StudentJobApplicationsAPIView(APIView):
 
 #for fetch adminapp models
 #api for view course by department
-from adminapp.models import *
+
 
 class ViewCoursesByDepartment(APIView):
     def get(self, request, department_id):
@@ -828,8 +766,7 @@ class ViewCourses(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
-from adminapp.models import Tbl_Job,Company
-from .serializers import JobSerializer,CompanySerializer
+
 class ViewJobs(APIView):
     def get(self, request):
         try:
@@ -850,11 +787,8 @@ class ViewCompanies(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from adminapp.models import Tbl_Job, Company
-from .serializers import JobSerializer, CompanySerializer
+ 
+
 
 class Job_View_by_CompanyView(APIView):
     def get(self, request, company_id):
@@ -918,11 +852,8 @@ class JobDetailView(APIView):
 
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import tbl_student
-from .serializers import StudentSerializer
+ 
+
 
 class StudentDetailView(APIView):
     def get(self, request, pk):
@@ -943,11 +874,8 @@ class StudentDetailView(APIView):
 
 
 #GUARD PART
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import StudentRequest
-from .serializers import StudentRequestSerializer
+ 
+
 
 class GuardApprovedLeaveRequestsAPIView(APIView):
     """
@@ -967,10 +895,7 @@ class GuardApprovedLeaveRequestsAPIView(APIView):
         }, status=status.HTTP_200_OK)
     
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import StudentRequest
+
 class GuardUpdateLeaveStatusAPIView(APIView):
     """
     Guard updates leave status using JSON:
@@ -1017,3 +942,186 @@ class GuardUpdateLeaveStatusAPIView(APIView):
             {"message": f"Leave status updated to '{new_status}' successfully"},
             status=status.HTTP_200_OK
         )
+import os
+from dotenv import load_dotenv
+from google import genai
+
+# Load environment variables
+load_dotenv()
+api_key = os.getenv("GOOGLE_API_KEY")
+
+class GeminiChatAPIView(APIView):
+    """
+    POST:
+    {
+        "message": "Hello"
+    }
+    """
+
+    def post(self, request):
+        user_message = request.data.get("message")
+
+        if not user_message:
+            return Response(
+                {"error": "Message is required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            client = genai.Client(api_key=api_key)
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=user_message
+            )
+
+            return Response(
+                {
+                    "user_message": user_message,
+                    "reply": response.text
+                },
+                status=status.HTTP_200_OK
+            )
+
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+# campuskeyapi/views.py
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from adminapp.models import FeeStructure, AdmissionProcess, tbl_course
+from dotenv import load_dotenv
+from google import genai
+import os
+import re
+
+# Load env
+load_dotenv()
+
+# Gemini client (NEW SDK)
+client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+
+
+# -----------------------------
+# Helper: Detect Course (SMART)
+# -----------------------------
+def detect_course(user_message):
+    msg = user_message.lower()
+
+    for course in tbl_course.objects.all():
+        course_name = course.name.lower()
+
+        # 1️⃣ Full name match
+        if course_name in msg:
+            return course
+
+        # 2️⃣ Partial word match (msc, mcs, bsc, etc.)
+        course_words = set(course_name.split())
+        msg_words = set(msg.split())
+
+        if course_words.intersection(msg_words):
+            return course
+
+        # 3️⃣ Abbreviation support (MSc CS → MSC)
+        abbreviation = "".join(word[0] for word in course_name.split())
+        if abbreviation.lower() in msg:
+            return course
+
+    return None
+
+
+# -----------------------------
+# Chatbot API
+# -----------------------------
+@api_view(["POST"])
+def chatbot_api(request):
+    user_message = request.data.get("message", "").lower().strip()
+
+    if not user_message:
+        return Response({"reply": "Please ask a question 😊"})
+
+    # -----------------------------
+    # Greeting
+    # -----------------------------
+    greetings = ["hi", "hello", "hey", "good morning", "good afternoon", "good evening"]
+    if any(greet in user_message for greet in greetings):
+        return Response({
+            "reply": (
+                "Hi 👋 How can I help you today?\n\n"
+                "You can ask things like:\n"
+                "• Fee for MSc Computer Science\n"
+                "• Admission process\n"
+                "• What is the fee structure for MCS"
+            )
+        })
+
+    reply_parts = []
+
+    # -----------------------------
+    # Detect Intent
+    # -----------------------------
+    wants_fee = bool(re.search(r"\bfee|fees|amount|cost|price\b", user_message))
+    wants_admission = bool(re.search(r"\badmission|process|procedure|steps\b", user_message))
+
+    # -----------------------------
+    # Admission Process (GLOBAL)
+    # -----------------------------
+    if wants_admission:
+        steps = AdmissionProcess.objects.all().order_by("order")
+
+        if steps.exists():
+            text = "🎓 **Admission Process:**\n"
+            for step in steps:
+                text += f"\n{step.order}. **{step.step_title}** – {step.step_description}"
+            reply_parts.append(text)
+        else:
+            reply_parts.append("Admission process details are not added yet.")
+
+    # -----------------------------
+    # Fee Structure (COURSE BASED)
+    # -----------------------------
+    if wants_fee:
+        course = detect_course(user_message)
+
+        if course:
+            fees = FeeStructure.objects.filter(course=course)
+
+            if fees.exists():
+                text = f"💰 **Fee Structure for {course.name}:**\n"
+                for fee in fees:
+                    text += f"\n• **{fee.name}**: ₹{fee.amount}"
+                reply_parts.append(text)
+            else:
+                reply_parts.append(
+                    f"💡 Fee details for **{course.name}** are not added yet.\n"
+                    "Please contact the college office."
+                )
+        else:
+            reply_parts.append(
+                "❗ I couldn't identify the course.\n"
+                "Example: *Fee for MSc Computer Science*"
+            )
+
+    # -----------------------------
+    # If DB answered → return
+    # -----------------------------
+    if reply_parts:
+        return Response({"reply": "\n\n".join(reply_parts)})
+
+    # -----------------------------
+    # Gemini Fallback
+    # -----------------------------
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=f"You are a college admission assistant.\n\nUser question: {user_message}"
+        )
+        return Response({"reply": response.text})
+
+    except Exception:
+        return Response({
+            "reply": "I can help with admission process and course fee details 😊"
+        })

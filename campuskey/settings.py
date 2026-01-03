@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "adminapp",
     "campuskeyapi",
+    "rest_framework",
+    "drf_yasg"
 ]
 
 MIDDLEWARE = [

@@ -33,6 +33,14 @@ urlpatterns=[
     path("admin_view_applicants/", views.admin_view_applicants, name="admin_view_applicants"),
     path("manage-guard/", manage_guard, name="manage_guard"),
     path("hod/update-application-status/<int:application_id>/",update_application_status,name="update_application_status"),
+    path("add-fee-structure/", views.add_fee_structure, name="add_fee_structure"),
+    path("manage-fee-structure/", views.manage_fee_structure, name="manage_fee_structure"),
+    path("edit-fee-structure/<int:fee_structure_id>/", views.edit_fee_structure, name="edit_fee_structure"),
+    path("delete-fee-structure/<int:fee_structure_id>/", views.delete_fee_structure, name="delete_fee_structure"),
+    path("admission/add/", views.admission_process_form, name="add_admission_process"),
+    path("admission/edit/<int:process_id>/", views.admission_process_form, name="edit_admission_process"),
+    path("admission/manage/", views.manage_admission_process, name="manage_admission_process"),
+    path("admission/delete/<int:process_id>/", views.delete_admission_process, name="delete_admission_process"),
 
 
 
